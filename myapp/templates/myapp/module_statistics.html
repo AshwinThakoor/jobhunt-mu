@@ -1,0 +1,60 @@
+{% extends 'myapp/base.html' %}
+
+{% load static %}
+
+{% block content %}
+<div class="mt-4">
+    <div class="d-flex align-items-center mb-4">
+        <button onclick="history.back()" class="btn btn-brown me-3">
+            <i class="fas fa-arrow-left"></i> Back
+        </button>
+        <h2 class="text-brown mb-0">Module Statistics</h2>
+    </div>
+
+    <div class="charts-container">
+        {% for field, data in stats.items %}
+        <div class="chart-box">
+            <h3>{{ data.name }}</h3>
+            <div class="stats">
+                <p>Highest Mark: {{ data.highest_mark }}</p>
+                <p>Lowest Mark: {{ data.lowest_mark }}</p>
+                <p>Median Mark: {{ data.median_mark|floatformat:2 }}</p>
+                <p>Average Mark: {{ data.average_mark|floatformat:2 }}</p>
+                <p>Pass Percentage: {{ data.pass_percentage|floatformat:2 }}%</p>
+                <p>Total Students: {{ data.total_students }}</p>
+                <p>Pass Count: {{ data.pass_count }}</p>
+                <p>Fail Count: {{ data.fail_count }}</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<style>
+    .btn-brown {
+        background-color: #8B4513;
+        color: white;
+    }
+    .btn-brown:hover {
+        background-color: #6B3410;
+        color: white;
+    }
+    .charts-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 20px;
+        padding: 20px;
+    }
+    .chart-box {
+        background-color: #fff;
+        border-radius: 8px;
+        padding: 20px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .stats {
+        margin-bottom: 20px;
+    }
+</style>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+{% endblock %} 

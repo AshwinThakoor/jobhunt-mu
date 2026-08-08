@@ -1,0 +1,63 @@
+﻿{% extends 'myapp/base.html' %}
+{% block title %}JobHunt MU Premium | Upgrade your job search{% endblock %}
+{% block content %}
+<section class="pricing-wrap">
+    <div class="container">
+        <div class="text-center mb-5">
+            <span class="eyebrow text-success"><i class="bi bi-stars"></i> JobHunt MU Premium</span>
+            <h1 class="display-4 fw-bold">More clarity. Stronger applications.</h1>
+            <p class="lead text-muted mx-auto" style="max-width: 670px;">Turn a scattered job search into one focused plan with recommendations, insights and premium opportunities.</p>
+        </div>
+
+        <div class="pricing-card mx-auto" style="max-width: 980px;">
+            <div class="row g-0">
+                <div class="col-lg-7 pricing-main">
+                    <div class="d-flex justify-content-between align-items-start gap-3">
+                        <div>
+                            <div class="text-uppercase small fw-bold text-success">One-time upgrade</div>
+                            <div class="price">
+                                <strong>{{ premium_currency }} {{ premium_amount }}</strong>
+                            </div>
+                        </div>
+                        <span class="premium-pill"><i class="bi bi-lightning-charge-fill me-1"></i> Instant access</span>
+                    </div>
+
+                    <ul class="benefit-list">
+                        <li><i class="bi bi-check-circle-fill"></i><span><strong>Premium opportunities</strong><br><span class="text-muted">See complete details for exclusive listings.</span></span></li>
+                        <li><i class="bi bi-check-circle-fill"></i><span><strong>Personalized recommendations</strong><br><span class="text-muted">Surface roles that match your skills and profile.</span></span></li>
+                        <li><i class="bi bi-check-circle-fill"></i><span><strong>Application insights</strong><br><span class="text-muted">Keep your progress and next steps organized.</span></span></li>
+                        <li><i class="bi bi-check-circle-fill"></i><span><strong>Downloadable analytics</strong><br><span class="text-muted">Take your internship data with you.</span></span></li>
+                    </ul>
+
+                    <form method="post">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-brand btn-lg w-100" {% if not stripe_ready %}disabled{% endif %}>
+                            Continue to secure checkout <i class="bi bi-arrow-right ms-2"></i>
+                        </button>
+                    </form>
+                    {% if not stripe_ready %}
+                        <div class="alert alert-warning mt-3 mb-0">Stripe test keys have not been configured yet. Add them to your environment to enable checkout.</div>
+                    {% endif %}
+                    <p class="secure-note mt-3 mb-0"><i class="bi bi-lock-fill me-1"></i> Payment is processed securely by Stripe. JobHunt MU never stores your card number.</p>
+                </div>
+
+                <div class="col-lg-5 pricing-aside">
+                    <div class="company-initial mb-4"><i class="bi bi-shield-check"></i></div>
+                    <h2>Checkout you can trust</h2>
+                    <p class="text-white-50">Youâ€™ll complete payment on Stripeâ€™s secure checkout page. Premium access is activated only after Stripe confirms a successful payment.</p>
+                    <hr class="border-light opacity-25 my-4">
+                    <div class="d-flex gap-3 mb-3">
+                        <i class="bi bi-credit-card fs-4 text-success"></i>
+                        <div><strong>Major cards supported</strong><div class="small text-white-50">Availability depends on your Stripe account.</div></div>
+                    </div>
+                    <div class="d-flex gap-3">
+                        <i class="bi bi-receipt fs-4 text-success"></i>
+                        <div><strong>Payment history</strong><div class="small text-white-50">Every attempt is recorded in your billing page.</div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+

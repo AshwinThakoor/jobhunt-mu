@@ -1,0 +1,207 @@
+{% extends 'myapp/base.html' %}
+{% block title %}AI CV Checker | JobHunt MU{% endblock %}
+{% block content %}
+<section class="checker-hero">
+    <div class="container">
+        <a href="{% url 'cv_detail' cv.pk %}" class="breadcrumb-link">
+            <i class="bi bi-arrow-left me-1"></i>Back to {{ cv.title }}
+        </a>
+        <div class="row align-items-end g-4 mt-1">
+            <div class="col-lg-8">
+                <span class="eyebrow"><i class="bi bi-stars"></i> Explainable CV intelligence</span>
+                <h1>AI CV Checker</h1>
+                <p>Get an evidence-based review of ATS compatibility, structure, writing,
+                    achievement impact and fit for a specific role.</p>
+            </div>
+            <div class="col-lg-4 text-lg-end">
+                <span class="privacy-chip"><i class="bi bi-shield-lock"></i> Analysed privately</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="container checker-shell">
+    <div class="checker-layout">
+        <aside class="surface-card checker-form-card">
+            <div class="d-flex align-items-center gap-3 mb-3">
+                <span class="checker-file-icon"><i class="bi bi-file-earmark-person"></i></span>
+                <div class="min-width-0">
+                    <div class="small text-muted">CV being reviewed</div>
+                    <strong class="d-block text-truncate">{{ cv.title }}</strong>
+                </div>
+            </div>
+            <form method="post" novalidate>
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label class="form-label" for="{{ form.target_role.id_for_label }}">{{ form.target_role.label }}</label>
+                    {{ form.target_role }}
+                    {% for error in form.target_role.errors %}<div class="invalid-feedback d-block">{{ error }}</div>{% endfor %}
+                </div>
+                <div class="mb-2">
+                    <label class="form-label" for="{{ form.job_description.id_for_label }}">{{ form.job_description.label }}</label>
+                    {{ form.job_description }}
+                    {% if form.job_description.help_text %}<div class="form-text">{{ form.job_description.help_text }}</div>{% endif %}
+                    {% for error in form.job_description.errors %}<div class="invalid-feedback d-block">{{ error }}</div>{% endfor %}
+                </div>
+                <button type="submit" class="btn btn-brand w-100 mt-3">
+                    <i class="bi bi-stars me-2"></i>{% if report %}Run updated analysis{% else %}Analyse my CV{% endif %}
+                </button>
+            </form>
+            <div class="checker-privacy-note">
+                <i class="bi bi-shield-check"></i>
+                <span>Your CV is processed inside JobHunt MU. Its text is not sent to an external AI provider.</span>
+            </div>
+        </aside>
+
+        <main>
+            {% if analysis_error %}
+                <div class="surface-card checker-error" role="alert">
+                    <span class="checker-alert-icon"><i class="bi bi-exclamation-triangle"></i></span>
+                    <div>
+                        <h2>We could not analyse this CV</h2>
+                        <p>{{ analysis_error }}</p>
+                        <p class="mb-0 small text-muted">For the most reliable result, upload a text-based PDF or DOCX with selectable text.</p>
+                    </div>
+                </div>
+            {% elif report %}
+                <section class="surface-card score-overview">
+                    <div class="score-gauge" style="--score: {{ report.overall_score }};">
+                        <div>
+                            <strong>{{ report.overall_score }}</strong>
+                            <span>/ 100</span>
+                        </div>
+                    </div>
+                    <div class="score-copy">
+                        <div class="d-flex flex-wrap align-items-center gap-2 mb-2">
+                            <span class="rating-pill">{{ report.rating }}</span>
+                            <span class="confidence-pill">{{ report.confidence }} analysis confidence</span>
+                        </div>
+                        <h2>Your CV scorecard</h2>
+                        <p>This score is evidence-based and directional. Start with the high-priority recommendations for the biggest improvement.</p>
+                        <div class="score-metrics">
+                            <span><strong>{{ report.metrics.word_count }}</strong> words</span>
+                            <span><strong>{{ report.metrics.achievement_count }}</strong> achievement lines</span>
+                            <span><strong>{{ report.metrics.quantified_count }}</strong> quantified results</span>
+                            {% if report.target.role %}<span><strong>{{ report.metrics.matched_skill_count }}/{{ report.metrics.target_skill_count }}</strong> target skills</span>{% endif %}
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-outline-brand score-print" onclick="window.print()">
+                        <i class="bi bi-printer me-1"></i>Print report
+                    </button>
+                </section>
+
+                {% if report.extraction.warnings %}
+                    <div class="alert alert-warning mt-3">
+                        <strong>Extraction note:</strong>
+                        {% for warning in report.extraction.warnings %}{{ warning }}{% if not forloop.last %} {% endif %}{% endfor %}
+                    </div>
+                {% endif %}
+
+                <section class="mt-4">
+                    <div class="checker-section-heading">
+                        <div>
+                            <span class="section-kicker">Detailed score</span>
+                            <h2>What the checker assessed</h2>
+                        </div>
+                    </div>
+                    <div class="category-grid-checker">
+                        {% for category in report.categories %}
+                            <article class="surface-card category-score-card">
+                                <div class="d-flex justify-content-between gap-3">
+                                    <div>
+                                        <span class="category-status">{{ category.status }}</span>
+                                        <h3>{{ category.name }}</h3>
+                                    </div>
+                                    <strong class="category-percent">{{ category.percentage }}%</strong>
+                                </div>
+                                <div class="progress category-progress" role="progressbar" aria-label="{{ category.name }}" aria-valuenow="{{ category.percentage }}" aria-valuemin="0" aria-valuemax="100">
+                                    <div class="progress-bar" style="width: {{ category.percentage }}%"></div>
+                                </div>
+                                <p>{{ category.evidence }}</p>
+                            </article>
+                        {% endfor %}
+                    </div>
+                </section>
+
+                <section class="mt-5">
+                    <div class="checker-section-heading">
+                        <div>
+                            <span class="section-kicker">Action plan</span>
+                            <h2>Prioritized recommendations</h2>
+                        </div>
+                        <span class="small text-muted">{{ report.recommendations|length }} focused improvements</span>
+                    </div>
+                    <div class="recommendation-stack">
+                        {% for item in report.recommendations %}
+                            <article class="surface-card recommendation-card priority-{{ item.priority|lower }}">
+                                <div class="recommendation-rank">{{ forloop.counter }}</div>
+                                <div>
+                                    <div class="d-flex flex-wrap gap-2 align-items-center mb-2">
+                                        <span class="priority-badge">{{ item.priority }} priority</span>
+                                        <span class="recommendation-category">{{ item.category }}</span>
+                                    </div>
+                                    <h3>{{ item.title }}</h3>
+                                    <p>{{ item.detail }}</p>
+                                    <div class="recommendation-action">
+                                        <i class="bi bi-arrow-right-circle"></i>
+                                        <span><strong>Recommended action:</strong> {{ item.action }}</span>
+                                    </div>
+                                </div>
+                            </article>
+                        {% endfor %}
+                    </div>
+                </section>
+
+                <div class="row g-4 mt-2">
+                    <div class="col-lg-6">
+                        <section class="surface-card checker-list-card h-100">
+                            <span class="section-kicker">What works</span>
+                            <h2>Detected strengths</h2>
+                            <ul class="checker-clean-list">
+                                {% for strength in report.strengths %}
+                                    <li><i class="bi bi-check-circle-fill"></i><span>{{ strength }}</span></li>
+                                {% endfor %}
+                            </ul>
+                        </section>
+                    </div>
+                    <div class="col-lg-6">
+                        <section class="surface-card checker-list-card h-100">
+                            <span class="section-kicker">Fast audit</span>
+                            <h2>Core checks</h2>
+                            <ul class="checker-clean-list checks-list">
+                                {% for check in report.checks %}
+                                    <li class="{% if check.passed %}check-pass{% else %}check-fail{% endif %}">
+                                        <i class="bi {% if check.passed %}bi-check-circle-fill{% else %}bi-x-circle-fill{% endif %}"></i>
+                                        <span>{{ check.label }}</span>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </section>
+                    </div>
+                </div>
+
+                <p class="checker-disclaimer"><i class="bi bi-info-circle me-1"></i>{{ report.disclaimer }} Analysis engine {{ report.version }}.</p>
+            {% else %}
+                <section class="surface-card checker-empty">
+                    <div class="checker-empty-visual">
+                        <span><i class="bi bi-file-earmark-text"></i></span>
+                        <i class="bi bi-stars"></i>
+                    </div>
+                    <span class="section-kicker">Professional review</span>
+                    <h2>Turn your CV into a focused improvement plan</h2>
+                    <p>The checker reviews the document itself, then explains the evidence behind every score. Add a target role and job description to unlock a tailored skill-gap analysis.</p>
+                    <div class="checker-capabilities">
+                        <span><i class="bi bi-check2"></i> ATS scanability</span>
+                        <span><i class="bi bi-check2"></i> Measurable impact</span>
+                        <span><i class="bi bi-check2"></i> Content structure</span>
+                        <span><i class="bi bi-check2"></i> Role alignment</span>
+                        <span><i class="bi bi-check2"></i> Privacy signals</span>
+                        <span><i class="bi bi-check2"></i> Actionable recommendations</span>
+                    </div>
+                    <p class="small text-muted mb-0">Tip: use the complete job advert for a more precise comparison.</p>
+                </section>
+            {% endif %}
+        </main>
+    </div>
+</div>
+{% endblock %}

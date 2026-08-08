@@ -1,0 +1,129 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Find Mauritius jobs, internships, remote roles and freelance projects across trusted sources with JobHunt MU.">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="{% block og_title %}JobHunt MU | One search. More possibilities.{% endblock %}">
+    <meta property="og:description" content="{% block og_description %}Explore Mauritius jobs, internships, remote roles and freelance projects across trusted sources.{% endblock %}">
+    <meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{% static 'myapp/images/og-jobhunt-mu.png' %}">
+    <meta name="twitter:card" content="summary_large_image">
+    <title>{% block title %}JobHunt MU | Jobs, remote work and freelance projects{% endblock %}</title>
+    <link rel="preconnect" href="https://cdn.jsdelivr.net">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="{% static 'myapp/css/site.css' %}">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light site-navbar sticky-top">
+        <div class="container">
+            <a class="navbar-brand brand-lockup" href="{% url 'home' %}" aria-label="JobHunt MU home">
+                <span class="brand-mark">JH</span>
+                <span>JobHunt <span class="brand-accent">MU</span></span>
+            </a>
+            <button class="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav" aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="mainNav">
+                <ul class="navbar-nav ms-lg-5 me-auto align-items-lg-center">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'internship_list' %}">Explore jobs</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'internship_list' %}?opportunity_type=freelance">Freelance</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'internship_list' %}#sources">Sources</a>
+                    </li>
+                    {% if user.is_authenticated %}
+                        <li class="nav-item"><a class="nav-link" href="{% url 'dashboard' %}">Dashboard</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'application_list' %}">Applications</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'recommendations' %}">AI Matches</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'saved_jobs' %}">Saved</a></li>
+                    {% endif %}
+                </ul>
+
+                <div class="d-flex align-items-center gap-2 mt-3 mt-lg-0">
+                    {% if user.is_authenticated %}
+                        {% if not user.userprofile.is_premium %}
+                            <a class="btn btn-premium btn-sm" href="{% url 'create_payment' %}">
+                                <i class="bi bi-stars me-1"></i> Go Premium
+                            </a>
+                        {% endif %}
+                        <div class="dropdown">
+                            <button class="btn account-button dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                {% if user.userprofile.profile_picture %}
+                                    <img src="{{ user.userprofile.profile_picture.url }}" class="profile-picture" alt="">
+                                {% else %}
+                                    <span class="avatar-fallback">{{ user.first_name|default:user.username|first|upper }}</span>
+                                {% endif %}
+                                <span class="account-label">{{ user.first_name|default:user.username }}</span>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end border-0 shadow-lg">
+                                <li><a class="dropdown-item" href="{% url 'profile' %}"><i class="bi bi-person me-2"></i>Profile</a></li>
+                                <li><a class="dropdown-item" href="{% url 'cv_list' %}"><i class="bi bi-file-earmark-text me-2"></i>My CVs</a></li>
+                                <li><a class="dropdown-item" href="{% url 'payment_list' %}"><i class="bi bi-receipt me-2"></i>Billing</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="{% url 'logout' %}"><i class="bi bi-box-arrow-right me-2"></i>Sign out</a></li>
+                            </ul>
+                        </div>
+                    {% else %}
+                        <a class="btn btn-link nav-login" href="{% url 'login' %}">Log in</a>
+                        <a class="btn btn-brand" href="{% url 'signup' %}">Create account</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    {% if messages %}
+        <div class="toast-region container" aria-live="polite">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show shadow-sm" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <main>{% block content %}{% endblock %}</main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <div class="row g-4 align-items-start">
+                <div class="col-lg-5">
+                    <a class="brand-lockup footer-brand" href="{% url 'home' %}">
+                        <span class="brand-mark">JH</span>
+                        <span>JobHunt <span class="brand-accent">MU</span></span>
+                    </a>
+                    <p class="footer-copy mt-3">Mauritius jobs, internships, remote roles and freelance projects—brought together without the tab overload.</p>
+                </div>
+                <div class="col-6 col-lg-2 offset-lg-1">
+                    <h2 class="footer-heading">Explore</h2>
+                    <a href="{% url 'internship_list' %}">Opportunities</a>
+                    <a href="{% url 'signup' %}">Create account</a>
+                    {% if user.is_authenticated %}<a href="{% url 'dashboard' %}">Dashboard</a>{% endif %}
+                </div>
+                <div class="col-6 col-lg-2">
+                    <h2 class="footer-heading">Support</h2>
+                    <a href="{% url 'internship_list' %}#sources">Source directory</a>
+                    <a href="{% url 'create_payment' %}">Premium</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <span>&copy; {% now "Y" %} JobHunt MU. One search. More possibilities.</span>
+                <span class="d-flex align-items-center gap-2"><i class="bi bi-shield-check"></i> Secure checkout by Stripe</span>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>
+

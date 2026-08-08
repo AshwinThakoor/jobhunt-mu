@@ -1,0 +1,50 @@
+﻿{% extends 'myapp/base.html' %}
+{% block title %}Confirm Premium Upgrade | JobHunt MU{% endblock %}
+{% block extra_js %}
+<script src="https://js.stripe.com/v3/"></script>
+<script>
+    var stripe = Stripe("{{ stripe_public_key }}");
+    var elements = stripe.elements();
+    var card = elements.create('card');
+    card.mount('#card-element');
+
+    var form = document.getElementById('payment-form');
+    form.addEventListener('submit', function(event) {
+        event.preventDefault();
+        stripe.confirmCardPayment("{{ client_secret }}", {
+            payment_method: {
+                card: card
+            }
+        }).then(function(result) {
+            if (result.error) {
+                document.getElementById('card-errors').textContent = result.error.message;
+            } else {
+                if (result.paymentIntent.status === 'succeeded') {
+                    window.location.href = "{% url 'confirm_premium_success' %}";
+                }
+            }
+        });
+    });
+</script>
+{% endblock %}
+{% block content %}
+<div class="container py-4">
+    <div class="card shadow-sm mx-auto" style="max-width: 420px;">
+        <div class="card-body text-center">
+            <h2 class="mb-3">Confirm Premium Upgrade</h2>
+            <p class="lead">You are about to upgrade your account to <span class="fw-bold text-primary">Premium</span> for <span class="fw-bold">${{ amount }}</span>.</p>
+            <ul class="list-group mb-4 text-start">
+                <li class="list-group-item border-0"><i class="bi bi-check-circle-fill text-success"></i> Access to premium internships</li>
+                <li class="list-group-item border-0"><i class="bi bi-check-circle-fill text-success"></i> Priority application review</li>
+                <li class="list-group-item border-0"><i class="bi bi-check-circle-fill text-success"></i> Downloadable CV analytics</li>
+                <li class="list-group-item border-0"><i class="bi bi-check-circle-fill text-success"></i> Premium badge on your profile</li>
+            </ul>
+            <form id="payment-form">
+                <div id="card-element" class="mb-3"><!-- Stripe card element will be inserted here --></div>
+                <div id="card-errors" style="color: red;"></div>
+                <button type="submit" class="btn btn-lg btn-success w-100 mt-3">Pay ${{ amount }} &amp; Upgrade</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %} 

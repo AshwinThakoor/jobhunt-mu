@@ -1,0 +1,25 @@
+﻿{% extends 'myapp/base.html' %}
+{% block title %}Portal | JobHunt MU{% endblock %}
+{% block content %}
+<div class="container py-4">
+    <h2 class="mb-4">JobHunt MU Portal</h2>
+    <p class="mb-4">Welcome! Choose a feature to explore:</p>
+    <div class="row row-cols-1 row-cols-md-2 g-4">
+        <div class="col"><a class="btn btn-outline-primary w-100 mb-2" href="{% url 'dashboard' %}">Dashboard</a></div>
+        <div class="col"><a class="btn btn-outline-primary w-100 mb-2" href="{% url 'profile' %}">Profile</a></div>
+        <div class="col"><a class="btn btn-outline-primary w-100 mb-2" href="{% url 'internship_list' %}">Internship Listings</a></div>
+        <div class="col"><a class="btn btn-outline-primary w-100 mb-2" href="{% url 'cv_list' %}">My CVs</a></div>
+        <div class="col"><a class="btn btn-outline-primary w-100 mb-2" href="{% url 'application_list' %}">My Applications</a></div>
+        <div class="col"><a class="btn btn-outline-primary w-100 mb-2" href="{% url 'recommendations' %}">Recommendations</a></div>
+        <div class="col"><a class="btn btn-outline-primary w-100 mb-2" href="{% url 'roadmap' %}">Roadmap</a></div>
+        <div class="col"><a class="btn btn-outline-primary w-100 mb-2" href="{% url 'payment_list' %}">Payments</a></div>
+        <div class="col"><a class="btn btn-outline-primary w-100 mb-2" href="{% url 'employer_dashboard' %}">Employer Dashboard</a></div>
+        <div class="col"><a class="btn btn-outline-primary w-100 mb-2" href="{% url 'create_company' %}">Create Company</a></div>
+        <div class="col"><a class="btn btn-outline-primary w-100 mb-2" href="{% url 'create_internship' %}">Post Internship</a></div>
+        <div class="col"><a class="btn btn-outline-secondary w-100 mb-2" href="{% url 'user_form' %}">Student Record Form (Legacy)</a></div>
+        <div class="col"><a class="btn btn-outline-secondary w-100 mb-2" href="{% url 'view_records' %}">View Student Records (Legacy)</a></div>
+        <div class="col"><a class="btn btn-outline-secondary w-100 mb-2" href="{% url 'home_legacy' %}">Legacy Home</a></div>
+    </div>
+</div>
+{% endblock %}
+

@@ -1,0 +1,86 @@
+﻿{% extends 'myapp/base.html' %}
+{% block title %}Portal | JobHunt MU{% endblock %}
+{% block content %}
+<div class="container py-5">
+    <h2 class="mb-4">Your Portal</h2>
+    <div class="row g-4">
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body text-center">
+                    <i class="bi bi-briefcase-fill display-4 text-primary mb-3"></i>
+                    <h5 class="card-title">Browse Internships</h5>
+                    <p class="card-text">Explore a wide range of internships and apply to those that match your interests.</p>
+                    <a href="{% url 'internship_list' %}" class="btn btn-outline-primary">View Internships</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body text-center">
+                    <i class="bi bi-star-fill display-4 text-warning mb-3"></i>
+                    <h5 class="card-title">Premium Internships</h5>
+                    <p class="card-text">Access exclusive, high-quality internships available only to premium members.</p>
+                    {% if user.userprofile.is_premium %}
+                        <a href="{% url 'internship_list' %}" class="btn btn-warning">Browse Premium</a>
+                    {% else %}
+                        <a href="{% url 'create_payment' %}" class="btn btn-outline-warning">Upgrade to Premium</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body text-center">
+                    <i class="bi bi-bar-chart-fill display-4 text-success mb-3"></i>
+                    <h5 class="card-title">AI CV Checker</h5>
+                    <p class="card-text">Review ATS readiness, evidence, structure and role alignment with prioritized recommendations.</p>
+                    {% if primary_cv %}
+                        <a href="{% url 'cv_analyze' primary_cv.pk %}" class="btn btn-success">Check {{ primary_cv.title|truncatechars:24 }}</a>
+                    {% else %}
+                        <a href="{% url 'cv_list' %}" class="btn btn-outline-success">Upload a CV</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body text-center">
+                    <i class="bi bi-person-lines-fill display-4 text-info mb-3"></i>
+                    <h5 class="card-title">Personalized Recommendations</h5>
+                    <p class="card-text">Get internship recommendations tailored to your skills and interests.</p>
+                    {% if user.userprofile.is_premium %}
+                        <a href="{% url 'recommendations' %}" class="btn btn-info">View Recommendations</a>
+                    {% else %}
+                        <a href="{% url 'create_payment' %}" class="btn btn-outline-info">Premium Only</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body text-center">
+                    <i class="bi bi-file-earmark-person-fill display-4 text-secondary mb-3"></i>
+                    <h5 class="card-title">Manage Your CV</h5>
+                    <p class="card-text">Upload, update, and manage your CVs for applications.</p>
+                    <a href="{% url 'cv_list' %}" class="btn btn-outline-secondary">Manage CVs</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body text-center">
+                    <i class="bi bi-clipboard-check-fill display-4 text-dark mb-3"></i>
+                    <h5 class="card-title">Track Applications</h5>
+                    <p class="card-text">Monitor your internship applications and their status in one place.</p>
+                    <a href="{% url 'application_list' %}" class="btn btn-outline-dark">View Applications</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% if not user.userprofile.is_premium %}
+        <div class="alert alert-warning mt-5 text-center">
+            <i class="bi bi-lock-fill"></i> Unlock more features with <strong>Premium</strong>! <a href="{% url 'create_payment' %}" class="btn btn-warning ms-2">Upgrade Now</a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %} 

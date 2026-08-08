@@ -1,0 +1,32 @@
+﻿{% extends 'myapp/base.html' %}
+{% block title %}Roadmap | JobHunt MU{% endblock %}
+{% block content %}
+<div class="container py-5">
+    <h2 class="mb-4 text-center">Your Roadmap</h2>
+    <div class="row justify-content-center mb-4">
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">Profile Completion</h5>
+                    <div class="progress mb-3" style="height: 24px;">
+                        <div class="progress-bar bg-success" role="progressbar" style="width: {{ profile_completion|floatformat:0 }}%;" aria-valuenow="{{ profile_completion|floatformat:0 }}" aria-valuemin="0" aria-valuemax="100">{{ profile_completion|floatformat:0 }}%</div>
+                    </div>
+                    <ul class="list-group list-group-flush mb-3">
+                        <li class="list-group-item">Total Applications: <strong>{{ total_applications }}</strong></li>
+                        <li class="list-group-item">Accepted Applications: <strong class="text-success">{{ accepted_applications }}</strong></li>
+                        <li class="list-group-item">Success Rate: <strong>{{ success_rate|floatformat:0 }}%</strong></li>
+                    </ul>
+                    <h5 class="mt-4">Tips to Improve</h5>
+                    <ul class="list-group list-group-flush">
+                        {% for tip in recommendations %}
+                            <li class="list-group-item"><i class="bi bi-lightbulb-fill text-warning"></i> {{ tip }}</li>
+                        {% empty %}
+                            <li class="list-group-item">You're on the right track!</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

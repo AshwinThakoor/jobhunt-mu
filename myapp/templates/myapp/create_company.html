@@ -1,0 +1,14 @@
+﻿{% extends 'myapp/base.html' %}
+{% load crispy_forms_tags %}
+{% block title %}Create Company | JobHunt MU{% endblock %}
+{% block content %}
+<div class="container py-4">
+    <h2>Create Company Profile</h2>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form|crispy }}
+        <button type="submit" class="btn btn-primary">Create Company</button>
+        <a href="{% url 'employer_dashboard' %}" class="btn btn-secondary ms-2">Cancel</a>
+    </form>
+</div>
+{% endblock %} 

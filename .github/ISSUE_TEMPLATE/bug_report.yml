@@ -1,0 +1,27 @@
+name: Bug report
+description: Report a reproducible defect
+title: "bug: "
+labels: [bug]
+body:
+  - type: textarea
+    attributes:
+      label: Description
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Reproduction steps
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Expected behavior
+  - type: input
+    attributes:
+      label: Python and Django versions
+  - type: checkboxes
+    attributes:
+      label: Privacy check
+      options:
+        - label: I removed secrets, personal resumes, and payment information.
+          required: true

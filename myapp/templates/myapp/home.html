@@ -1,0 +1,50 @@
+{% extends 'myapp/base.html' %}
+{% load static %}
+{% block title %}JobHunt MU | Human ambition, powered by AI{% endblock %}
+{% block content %}
+<section class="ai-handshake-hero" id="aiHandshakeHero">
+  <div class="handshake-visual" aria-hidden="true">
+    <img src="{% static 'myapp/images/ai-handshake-hero.png' %}" alt="">
+    <span class="handshake-pulse"></span>
+  </div>
+  <div class="container hero-content-wrap">
+    <div class="hero-copy-panel">
+      <span class="hero-pill"><i class="bi bi-stars"></i> AI-powered career platform</span>
+      <h1>Where human potential meets <span>AI intelligence.</span></h1>
+      <p>Discover better-fit jobs, understand every match, and build stronger applications from one professional career workspace.</p>
+      <div class="d-flex flex-wrap gap-3">
+        <a href="{% url 'internship_list' %}" class="btn btn-hero-primary btn-lg">Find your next job <i class="bi bi-arrow-right"></i></a>
+        {% if user.is_authenticated %}<a href="{% url 'cv_list' %}" class="btn btn-hero-secondary btn-lg">Upload resume</a>{% else %}<a href="{% url 'signup' %}" class="btn btn-hero-secondary btn-lg">Create free account</a>{% endif %}
+      </div>
+      <div class="hero-trust"><strong>Built for ambitious job seekers</strong><span>Matching · CV analysis · Application tracking</span></div>
+    </div>
+  </div>
+  <div class="scroll-cue"><i class="bi bi-mouse"></i><span>Scroll to connect</span></div>
+</section>
+
+<section class="home-feature-strip">
+  <div class="container"><div class="row g-3">
+    <div class="col-md-6 col-xl-3"><div class="home-feature-card"><i class="bi bi-bullseye"></i><div><h2>AI job matching</h2><p>Personalized recommendations based on your real skills.</p></div></div></div>
+    <div class="col-md-6 col-xl-3"><div class="home-feature-card"><i class="bi bi-file-earmark-person"></i><div><h2>Smart CV tools</h2><p>Understand gaps and improve your application evidence.</p></div></div></div>
+    <div class="col-md-6 col-xl-3"><div class="home-feature-card"><i class="bi bi-buildings"></i><div><h2>Company intelligence</h2><p>Research employers and opportunities in one place.</p></div></div></div>
+    <div class="col-md-6 col-xl-3"><div class="home-feature-card"><i class="bi bi-chat-dots"></i><div><h2>Career assistant</h2><p>Guidance whenever you need help moving forward.</p></div></div></div>
+  </div></div>
+</section>
+
+<section class="how-it-works-home"><div class="container py-5 text-center"><span class="eyebrow">How it works</span><h2>Your success, powered by AI</h2><p>Upload your resume, understand your strongest matches, and move every application forward with confidence.</p></div></section>
+{% endblock %}
+{% block extra_js %}
+<script>
+(() => {
+  const hero = document.getElementById('aiHandshakeHero');
+  if (!hero || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const update = () => {
+    const rect = hero.getBoundingClientRect();
+    const progress = Math.min(1, Math.max(0, -rect.top / Math.max(1, rect.height * .72)));
+    hero.style.setProperty('--handshake-progress', progress.toFixed(3));
+  };
+  update();
+  window.addEventListener('scroll', update, {passive:true});
+})();
+</script>
+{% endblock %}

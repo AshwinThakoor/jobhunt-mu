@@ -1,0 +1,21 @@
+﻿{% extends 'myapp/base.html' %}
+{% block title %}Application Details | JobHunt MU{% endblock %}
+{% block content %}
+<div class="container py-4">
+    <h2>Application Details</h2>
+    <div class="card mb-3">
+        <div class="card-body">
+            <h5>{{ application.internship.title }}</h5>
+            <p><strong>Company:</strong> {{ application.internship.company.name }}</p>
+            <p><strong>Status:</strong> <span class="badge bg-info">{{ application.status|title }}</span></p>
+            <p><strong>Applied At:</strong> {{ application.applied_at }}</p>
+            <p><strong>Cover Letter:</strong></p>
+            <div class="border p-2 mb-2">{{ application.cover_letter|linebreaks }}</div>
+            {% if application.notes %}
+                <p><strong>Notes:</strong> {{ application.notes }}</p>
+            {% endif %}
+            <a href="{% url 'application_list' %}" class="btn btn-secondary">Back to Applications</a>
+        </div>
+    </div>
+</div>
+{% endblock %} 

@@ -1,0 +1,4 @@
+external_id,source_name,source_url,job_title,company,location,job_type,opportunity_type,work_mode,skills_required
+sample:001,Sample Source,https://example.com/jobs/1,Junior Data Analyst,Example Analytics Ltd,Ebene,Full time,graduate,hybrid,"SQL, Excel, Python"
+sample:002,Sample Source,https://example.com/jobs/2,Software Engineering Intern,Example Labs,Port Louis,Internship,internship,onsite,"Python, Django, Git"
+sample:003,Sample Source,https://example.com/jobs/3,Remote Data Engineer,Example Cloud,Remote,Full time,remote,remote,"SQL, ETL, Cloud"

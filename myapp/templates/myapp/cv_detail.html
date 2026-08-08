@@ -1,0 +1,27 @@
+﻿{% extends 'myapp/base.html' %}
+{% block title %}CV Details | JobHunt MU{% endblock %}
+{% block content %}
+<div class="container py-5">
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+        <div>
+            <span class="eyebrow text-success mb-2">CV workspace</span>
+            <h1 class="h2 mb-0">CV details</h1>
+        </div>
+        <a href="{% url 'cv_analyze' cv.pk %}" class="btn btn-brand">
+            <i class="bi bi-stars me-2"></i>Open AI CV Checker
+        </a>
+    </div>
+    <div class="surface-card detail-card mb-3">
+        <div>
+            <h5>{{ cv.title }}</h5>
+            <p><strong>Uploaded:</strong> {{ cv.uploaded_at }}</p>
+            <p><strong>Validated:</strong> {% if cv.validated %}<span class="badge bg-success">Yes</span>{% else %}<span class="badge bg-warning">No</span>{% endif %}</p>
+            {% if cv.validation_notes %}
+                <p><strong>Validation Notes:</strong> {{ cv.validation_notes }}</p>
+            {% endif %}
+            <a href="{{ cv.file.url }}" class="btn btn-outline-brand" target="_blank" rel="noopener">View original CV</a>
+            <a href="{% url 'cv_list' %}" class="btn btn-secondary ms-2">Back to CVs</a>
+        </div>
+    </div>
+</div>
+{% endblock %} 

@@ -1,0 +1,4 @@
+-r requirements.txt
+pre-commit>=4,<5
+ruff>=0.12,<1
+coverage>=7,<8

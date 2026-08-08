@@ -1,0 +1,211 @@
+{% extends 'myapp/base.html' %}
+{% block title %}Jobs in Mauritius, remote work & freelance projects | JobHunt MU{% endblock %}
+{% block content %}
+<section class="hero">
+    <div class="container position-relative">
+        <span class="eyebrow"><i class="bi bi-compass"></i> One search. Many trusted sources.</span>
+        <h1>Your next opportunity, all in one hunt.</h1>
+        <p class="hero-copy">Discover Mauritius jobs, internships, graduate roles, remote work and freelance projects without opening ten different websites.</p>
+
+        <form method="get" class="search-panel" role="search">
+            <div class="search-grid">
+                <div class="search-field">
+                    <i class="bi bi-search"></i>
+                    <label class="visually-hidden" for="{{ search_form.query.id_for_label }}">Role, skill or company</label>
+                    {{ search_form.query }}
+                </div>
+                <div class="search-field">
+                    <i class="bi bi-geo-alt"></i>
+                    <label class="visually-hidden" for="{{ search_form.location.id_for_label }}">Location</label>
+                    {{ search_form.location }}
+                </div>
+                <button class="btn btn-brand" type="submit">Start hunting</button>
+            </div>
+        </form>
+
+        <div class="hero-stats">
+            <span><strong>{{ total_count }}</strong> live opportunities</span>
+            <span><strong>{{ active_source_count }}</strong> connected sources</span>
+            <span><strong>{{ company_count }}</strong> employers and clients</span>
+        </div>
+    </div>
+</section>
+
+<section class="category-section">
+    <div class="container">
+        <div class="category-grid">
+            {% for category in category_cards %}
+                <a class="category-card {% if request.GET.opportunity_type == category.key %}active{% endif %}" href="?opportunity_type={{ category.key }}">
+                    <span class="category-icon">
+                        {% if category.key == 'local' %}<i class="bi bi-building"></i>
+                        {% elif category.key == 'internship' %}<i class="bi bi-mortarboard"></i>
+                        {% elif category.key == 'graduate' %}<i class="bi bi-rocket-takeoff"></i>
+                        {% elif category.key == 'remote' %}<i class="bi bi-globe2"></i>
+                        {% else %}<i class="bi bi-laptop"></i>{% endif %}
+                    </span>
+                    <span><strong>{{ category.label }}</strong><small>{{ category.count }} available</small></span>
+                </a>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<section class="section-shell pt-4">
+    <div class="container">
+        <div class="section-heading">
+            <div>
+                <span class="eyebrow text-success mb-2">Curated opportunity feed</span>
+                <h2>Fresh from across the market</h2>
+                <p>Every result keeps its original source and sends candidates back to the official listing.</p>
+            </div>
+            {% if request.GET %}
+                <a class="btn btn-outline-brand" href="{% url 'internship_list' %}"><i class="bi bi-x-lg me-1"></i> Clear filters</a>
+            {% endif %}
+        </div>
+
+        <form method="get" class="filter-panel mb-4">
+            <div class="row g-3 align-items-end">
+                <div class="col-md-3">
+                    <label for="{{ search_form.query.id_for_label }}">Role or company</label>
+                    {{ search_form.query }}
+                </div>
+                <div class="col-md-2">
+                    <label for="{{ search_form.location.id_for_label }}">Location</label>
+                    {{ search_form.location }}
+                </div>
+                <div class="col-md-2">
+                    <label for="{{ search_form.opportunity_type.id_for_label }}">Opportunity</label>
+                    {{ search_form.opportunity_type }}
+                </div>
+                <div class="col-md-2">
+                    <label for="{{ search_form.source.id_for_label }}">Source</label>
+                    {{ search_form.source }}
+                </div>
+                <div class="col-md-2">
+                    <label for="{{ search_form.skills.id_for_label }}">Skills</label>
+                    {{ search_form.skills }}
+                </div>
+                <div class="col-md-1 d-grid">
+                    <button class="btn btn-brand px-2" type="submit" aria-label="Apply filters"><i class="bi bi-sliders"></i></button>
+                </div>
+            </div>
+        </form>
+
+        <div class="row g-4">
+            {% for internship in internships %}
+                <div class="col-md-6 col-xl-4">
+                    <article class="job-card">
+                        <div class="company-row">
+                            {% if internship.company.logo %}
+                                <img src="{{ internship.company.logo.url }}" class="company-logo" alt="{{ internship.company.name }} logo" loading="lazy">
+                            {% else %}
+                                <span class="company-initial" aria-hidden="true">{{ internship.company.name|first|upper }}</span>
+                            {% endif %}
+                            <span class="type-pill">{{ internship.get_opportunity_type_display }}</span>
+                        </div>
+
+                        <div class="source-line">
+                            <a href="?source={{ internship.source_name|urlencode }}" class="source-badge">{{ internship.source_name }}</a>
+                            {% if internship.work_mode != 'unspecified' %}<span>{{ internship.get_work_mode_display }}</span>{% endif %}
+                        </div>
+
+                        <h3><a href="{% url 'internship_detail' internship.pk %}">{{ internship.title }}</a></h3>
+                        <div class="company-name">{{ internship.company.name }}</div>
+
+                        <div class="job-meta">
+                            <span><i class="bi bi-geo-alt"></i>{{ internship.location|default:"Mauritius" }}</span>
+                            <span><i class="bi bi-cash-coin"></i>{{ internship.stipend|default:"Not disclosed" }}</span>
+                        </div>
+
+                        <p class="job-summary">{{ internship.description|truncatewords:27 }}</p>
+
+                        {% if internship.skills_required %}
+                            <div class="skill-list">
+                                {% for skill in internship.skills_required|slice:":4" %}
+                                    <span class="skill-pill">{{ skill }}</span>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+
+                        <div class="job-card-footer">
+                            <span class="deadline">
+                                {% if internship.application_deadline %}
+                                    Apply by {{ internship.application_deadline|date:"d M Y" }}
+                                {% elif internship.posted_date %}
+                                    Posted {{ internship.posted_date|date:"d M Y" }}
+                                {% else %}
+                                    Recently added
+                                {% endif %}
+                            </span>
+                            <a href="{% url 'internship_detail' internship.pk %}" class="btn btn-outline-brand btn-sm">View details <i class="bi bi-arrow-right ms-1"></i></a>
+                        </div>
+                    </article>
+                </div>
+            {% empty %}
+                <div class="col-12">
+                    <div class="empty-state">
+                        <div class="company-initial mx-auto mb-3"><i class="bi bi-search"></i></div>
+                        <h3>No matching opportunities</h3>
+                        <p class="text-muted">Try a broader keyword, another category or clear your source filter.</p>
+                        <a class="btn btn-brand" href="{% url 'internship_list' %}">See everything</a>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+        {% if internships.has_other_pages %}
+            <nav class="mt-5" aria-label="Opportunity pages">
+                <ul class="pagination justify-content-center">
+                    {% if internships.has_previous %}
+                        <li class="page-item"><a class="page-link" href="?{% if querystring %}{{ querystring }}&{% endif %}page={{ internships.previous_page_number }}" aria-label="Previous page"><i class="bi bi-chevron-left"></i></a></li>
+                    {% endif %}
+                    {% for num in internships.paginator.page_range %}
+                        <li class="page-item {% if internships.number == num %}active{% endif %}">
+                            <a class="page-link" href="?{% if querystring %}{{ querystring }}&{% endif %}page={{ num }}">{{ num }}</a>
+                        </li>
+                    {% endfor %}
+                    {% if internships.has_next %}
+                        <li class="page-item"><a class="page-link" href="?{% if querystring %}{{ querystring }}&{% endif %}page={{ internships.next_page_number }}" aria-label="Next page"><i class="bi bi-chevron-right"></i></a></li>
+                    {% endif %}
+                </ul>
+            </nav>
+        {% endif %}
+    </div>
+</section>
+
+<section class="source-section" id="sources">
+    <div class="container">
+        <div class="section-heading">
+            <div>
+                <span class="eyebrow text-success mb-2">Source directory</span>
+                <h2>One home for every kind of hunt</h2>
+                <p>Connected feeds update automatically. Restricted platforms open through their official experience.</p>
+            </div>
+        </div>
+        <div class="source-grid">
+            {% for source in source_directory %}
+                <article class="source-card">
+                    <div class="source-card-top">
+                        <span class="source-logo">{{ source.name|slice:":2"|upper }}</span>
+                        <span class="source-kind">{{ source.kind }}</span>
+                    </div>
+                    <h3>{{ source.name }}</h3>
+                    <p>{{ source.description }}</p>
+                    <div class="source-card-footer">
+                        {% if source.access == 'automatic' %}
+                            <span class="source-status connected"><i class="bi bi-broadcast-pin"></i> {{ source.count }} imported</span>
+                            <a href="?source={{ source.name|urlencode }}">View jobs</a>
+                        {% elif source.access == 'api_key' %}
+                            <span class="source-status"><i class="bi bi-key"></i> API key required</span>
+                            <a href="{{ source.url }}" target="_blank" rel="noopener noreferrer">Get access</a>
+                        {% else %}
+                            <span class="source-status"><i class="bi bi-box-arrow-up-right"></i> Official site</span>
+                            <a href="{{ source.url }}" target="_blank" rel="noopener noreferrer">Open platform</a>
+                        {% endif %}
+                    </div>
+                </article>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,48 @@
+{% extends 'myapp/base.html' %}
+{% load crispy_forms_tags %}
+{% block title %}My CVs | JobHunt MU{% endblock %}
+{% block content %}
+<div class="container py-5">
+    <div class="text-center mb-4"><span class="eyebrow">Career documents</span><h1>Manage and analyse your CVs</h1><p class="text-muted">Upload a PDF or DOCX under 10 MB. JobHunt MU extracts text locally and never claims to predict hiring.</p></div>
+    <div class="row mb-4">
+        <div class="col text-end">
+            <form method="post" enctype="multipart/form-data" class="d-inline-block">
+                {% csrf_token %}
+                {{ form.file }}
+                {{ form.title }}
+                <button type="submit" class="btn btn-success">Upload New CV</button>
+            </form>
+        </div>
+    </div>
+    <div class="row g-4">
+        {% for cv in cvs %}
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100 shadow-sm border-0">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ cv.title }}</h5>
+                        <p class="card-text small text-muted">Uploaded: {{ cv.uploaded_at|date:"M d, Y" }}</p>{% if cv.parsed_at %}<p class="small text-success"><i class="bi bi-check-circle"></i> Parsed · {{ cv.extracted_skills|length }} skills detected</p>{% elif cv.validation_notes %}<p class="small text-warning">{{ cv.validation_notes }}</p>{% endif %}
+                        {% if cv.is_primary %}
+                            <span class="badge bg-primary mb-2">Primary CV</span>
+                        {% endif %}
+                        <div class="d-flex flex-wrap gap-2 mt-3">
+                            <a href="{% url 'cv_analyze' cv.pk %}" class="btn btn-brand btn-sm">
+                                <i class="bi bi-stars me-1"></i>AI check
+                            </a>
+                            <a href="{{ cv.file.url }}" class="btn btn-outline-secondary btn-sm" target="_blank">View</a>
+                            <a href="{% url 'cv_detail' cv.pk %}" class="btn btn-outline-info btn-sm">Details</a>
+                            <a href="{% url 'cv_delete' cv.pk %}" class="btn btn-outline-danger btn-sm">Delete</a>
+                            {% if not cv.is_primary %}
+                                <a href="{% url 'set_primary_cv' cv.pk %}" class="btn btn-outline-primary btn-sm">Set as Primary</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <div class="col-12">
+                <div class="alert alert-info">No CVs uploaded yet.</div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %} 
