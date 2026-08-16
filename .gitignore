@@ -1,44 +1,36 @@
+# Secrets and local configuration
 .env
 .env.*
 !.env.example
+
+# Python environments and caches
 .venv/
 venv/
 __pycache__/
 *.py[cod]
-*.sqlite3
-*.sqlite3-journal
 .pytest_cache/
 .ruff_cache/
 .coverage
 htmlcov/
-staticfiles/
-media/*
-!media/cvs/
-!media/cvs/.gitkeep
-!media/company_logos/
-!media/company_logos/.gitkeep
+
+# Local databases and runtime output
+*.sqlite3
+*.sqlite3-journal
 *.log
-.DS_Store
-.vscode/
-.idea/
-*.code-workspace
+staticfiles/
+media/
+
+# Private or generated datasets
+data/raw/
+data/private/
+data/exports/
 all_internships.*
 interntrack_jobs.*
 jobhunt_opportunities.csv
 myjobmu_jobs.csv
 
-# User/runtime uploads
-media/
-
-# Local/private data
-data/raw/
-data/private/
-data/exports/
-
-# User/runtime uploads
-media/
-
-# Local/private data
-data/raw/
-data/private/
-data/exports/
+# Editor / OS files
+.DS_Store
+.vscode/
+.idea/
+*.code-workspace
