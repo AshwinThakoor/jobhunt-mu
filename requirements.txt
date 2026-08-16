@@ -1,5 +1,5 @@
 Django==5.1.6
-beautifulsoup4>=4.12,<5
+beautifulsoup4>=4.15.0,<5
 crispy-bootstrap5>=2024.10
 django-crispy-forms>=2.3
 openpyxl>=3.1,<4
