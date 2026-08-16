@@ -1,7 +1,7 @@
 Django==5.1.6
 beautifulsoup4>=4.12,<5
 crispy-bootstrap5>=2024.10
-django-crispy-forms>=2.3
+django-crispy-forms>=2.7
 openpyxl>=3.1,<4
 pandas>=2.2,<3
 Pillow>=11,<13
