@@ -1,0 +1,19 @@
+﻿{% extends 'myapp/base.html' %}
+{% block title %}Premium activated | JobHunt MU{% endblock %}
+{% block content %}
+<section class="pricing-wrap">
+    <div class="container">
+        <div class="surface-card detail-card text-center mx-auto" style="max-width: 650px;">
+            <span class="company-initial mx-auto mb-4"><i class="bi bi-check-lg"></i></span>
+            <span class="eyebrow text-success mb-2">Payment confirmed</span>
+            <h1>Welcome to Premium.</h1>
+            <p class="lead text-muted">Your payment of {{ payment.currency }} {{ payment.amount }} was verified and Premium access is now active.</p>
+            <div class="d-flex flex-column flex-sm-row justify-content-center gap-2 mt-4">
+                <a class="btn btn-brand" href="{% url 'recommendations' %}">See my recommendations</a>
+                <a class="btn btn-outline-brand" href="{% url 'internship_list' %}">Browse opportunities</a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+

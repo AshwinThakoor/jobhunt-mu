@@ -1,0 +1,78 @@
+{% extends 'myapp/base.html' %}
+{% block title %}AI Job Matches | JobHunt MU{% endblock %}
+{% block content %}
+<section class="recommendation-header">
+  <div class="container py-5">
+    <span class="eyebrow">Explainable matching</span>
+    <h1>Your strongest job matches</h1>
+    <p>Compared with <strong>{{ primary_cv.title }}</strong>. Scores measure compatibility—not your chance of being hired.</p>
+    <div class="filter-pills">
+      <a class="{% if status_filter == 'active' %}active{% endif %}" href="?status=active">Recommended</a>
+      <a class="{% if status_filter == 'saved' %}active{% endif %}" href="?status=saved">Saved</a>
+      <a class="{% if status_filter == 'all' %}active{% endif %}" href="?status=all">All</a>
+    </div>
+  </div>
+</section>
+
+<div class="container py-5">
+  {% if not is_premium %}
+    <div class="basic-preview-banner mb-4">
+      <div><span class="eyebrow">Basic preview</span><h2>Your top 3 AI matches</h2><p>Upgrade to unlock up to 30 matches, complete evidence, missing-skill analysis, and detailed score breakdowns.</p></div>
+      <a href="{% url 'create_payment' %}" class="btn btn-premium">Unlock Premium</a>
+    </div>
+  {% endif %}
+
+  <div class="recommendation-grid">
+    {% for rec in recommendations %}
+      <article class="recommendation-card">
+        <div class="recommendation-topline">
+          <div class="recommendation-title-block">
+            <span class="source-chip">{{ rec.internship.source_name }}</span>
+            <h2>{{ rec.internship.title }}</h2>
+            <a href="{% url 'internship_detail' rec.internship.pk %}" class="company-link">{{ rec.internship.company.name }}</a>
+            <p class="text-muted mt-2 mb-0"><i class="bi bi-geo-alt"></i> {{ rec.internship.location }} · {{ rec.internship.get_work_mode_display }}</p>
+          </div>
+          <div class="score-ring"><strong>{% widthratio rec.score 1 100 %}%</strong><span>match</span></div>
+        </div>
+
+        <p class="match-reason">{{ rec.reason }}</p>
+
+        {% if is_premium %}
+          <div class="evidence-grid">
+            <div class="evidence-block">
+              <h3><i class="bi bi-check-circle"></i> Strong matches</h3>
+              <div class="skill-row">{% for skill in rec.matched_skills %}<span>{{ skill }}</span>{% empty %}<em>No explicit skill match detected yet.</em>{% endfor %}</div>
+            </div>
+            <div class="evidence-block missing">
+              <h3><i class="bi bi-exclamation-circle"></i> Missing or unclear</h3>
+              <div class="skill-row">{% for skill in rec.missing_skills|slice:':6' %}<span>{{ skill }}</span>{% empty %}<em>No major extracted gaps.</em>{% endfor %}</div>
+            </div>
+          </div>
+          <details class="score-details">
+            <summary>How this score was calculated</summary>
+            {% for name,value in rec.score_breakdown.items %}
+              <div class="score-line"><span>{{ name|title }}</span><div><i style="width:{{ value }}%"></i></div><strong>{{ value }}%</strong></div>
+            {% endfor %}
+          </details>
+        {% else %}
+          <div class="locked-evidence">
+            <i class="bi bi-lock-fill"></i>
+            <div><strong>Detailed evidence is a Premium feature</strong><span>See matched skills, missing keywords, and the full calculation.</span></div>
+          </div>
+        {% endif %}
+
+        <div class="recommendation-actions">
+          <a href="{% url 'internship_detail' rec.internship.pk %}" class="btn btn-brand">View job</a>
+          <form method="post" action="{% url 'recommendation_action' rec.pk %}" class="recommendation-action-form">
+            {% csrf_token %}<input type="hidden" name="next" value="{% url 'recommendations' %}?status={{ status_filter }}">
+            <button name="action" value="save" class="btn btn-outline-primary"><i class="bi bi-bookmark"></i> Save</button>
+            <button name="action" value="dismiss" class="btn btn-link text-muted">Not interested</button>
+          </form>
+        </div>
+      </article>
+    {% empty %}
+      <div class="empty-career"><i class="bi bi-stars"></i><h2>No matches in this view</h2><p>Try another filter or refresh your primary CV.</p></div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

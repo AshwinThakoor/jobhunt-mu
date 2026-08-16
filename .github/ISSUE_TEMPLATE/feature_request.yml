@@ -1,0 +1,21 @@
+name: Feature request
+description: Propose a focused improvement
+title: "feat: "
+labels: [enhancement]
+body:
+  - type: textarea
+    attributes:
+      label: Problem
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Proposed solution
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Alternatives and trade-offs
+  - type: textarea
+    attributes:
+      label: Security, privacy, and external-source considerations

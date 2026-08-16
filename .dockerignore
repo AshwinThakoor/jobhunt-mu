@@ -1,0 +1,11 @@
+.git
+.github
+.venv
+.env
+__pycache__
+*.pyc
+*.sqlite3
+media/cvs
+media/company_logos
+staticfiles
+data/*.csv

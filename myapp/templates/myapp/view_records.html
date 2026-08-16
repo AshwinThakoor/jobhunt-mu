@@ -1,0 +1,70 @@
+{% extends 'myapp/base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Student Records</h2>
+    
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <form method="GET" class="d-flex">
+                <input class="form-control me-2" type="search" 
+                       placeholder="Search by name (e.g., John Smith)" 
+                       name="search" 
+                       value="{{ request.GET.search }}">
+                <button class="btn btn-outline-primary" type="submit">Search</button>
+                {% if request.GET.search %}
+                    <a href="{% url 'view_records' %}" class="btn btn-outline-secondary ms-2">Clear</a>
+                {% endif %}
+            </form>
+        </div>
+    </div>
+
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Database Design</th>
+                <th>Cloud Computing</th>
+                <th>Python Programming</th>
+                <th>IoT Design</th>
+                <th>Big Data</th>
+                <th>Network Tech</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for record in records %}
+            <tr>
+                <td><a href="{% url 'student_detail' record.pk %}">{{ record.first_name }}</a></td>
+                <td>{{ record.last_name }}</td>
+                <td>{{ record.database_design_and_implementation }}</td>
+                <td>{{ record.cloud_computing_and_techniques }}</td>
+                <td>{{ record.python_programming_methodology_2 }}</td>
+                <td>{{ record.internet_of_things_design_principles }}</td>
+                <td>{{ record.big_data_architecture_and_programming }}</td>
+                <td>{{ record.network_technologies_and_design }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="8" class="text-center">
+                    {% if request.GET.search %}
+                        No students found matching "{{ request.GET.search }}"
+                    {% else %}
+                        No student records available
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    {% if debug %}
+    <div class="mt-4">
+        <h4>Debug Information:</h4>
+        {% for record in records %}
+        <p>Record ID: {{ record.id }} - First Name: {{ record.first_name }} - Last Name: {{ record.last_name }}</p>
+        {% endfor %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

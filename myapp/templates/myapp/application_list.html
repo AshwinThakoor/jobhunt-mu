@@ -1,0 +1,41 @@
+﻿{% extends 'myapp/base.html' %}
+{% block title %}My Applications | JobHunt MU{% endblock %}
+{% block content %}
+<div class="container py-5">
+    <h2 class="mb-4 text-center">Track Your Applications</h2>
+    <div class="row g-4">
+        {% for application in applications %}
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100 shadow-sm border-0">
+                    <div class="card-body d-flex flex-column justify-content-between">
+                        <div>
+                            <div class="d-flex align-items-center mb-2">
+                                {% if application.internship.company.logo %}
+                                    <img src="{{ application.internship.company.logo.url }}" alt="{{ application.internship.company.name }} logo" class="me-2" style="height: 40px; width: 40px; object-fit: contain;">
+                                {% endif %}
+                                <div>
+                                    <strong>{{ application.internship.title }}</strong>
+                                    <div class="text-muted small">at {{ application.internship.company.name }}</div>
+                                </div>
+                            </div>
+                            <div class="mb-2 small text-muted">Applied: {{ application.applied_at|date:"M d, Y" }}</div>
+                            <div class="mb-2"><span class="badge bg-secondary">{{ application.status|title }}</span></div>
+                        </div>
+                        <div class="mt-2 d-flex gap-2">
+                            <a href="{% url 'internship_detail' application.internship.pk %}" class="btn btn-outline-primary btn-sm">View Internship</a>
+                            <a href="{% url 'application_detail' application.pk %}" class="btn btn-outline-info btn-sm">Details</a>
+                            {% if application.status == 'submitted' %}
+                                <a href="{% url 'withdraw_application' application.pk %}" class="btn btn-outline-danger btn-sm">Withdraw</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <div class="col-12">
+                <div class="alert alert-info">No applications found.</div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %} 

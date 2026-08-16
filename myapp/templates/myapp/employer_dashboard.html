@@ -1,0 +1,35 @@
+﻿{% extends 'myapp/base.html' %}
+{% block title %}Employer Dashboard | JobHunt MU{% endblock %}
+{% block content %}
+<div class="container py-4">
+    <h2>Employer Dashboard</h2>
+    <div class="card mb-3">
+        <div class="card-body">
+            <h5>Company: {{ company.name }}</h5>
+            <p>{{ company.description }}</p>
+            <p><strong>Location:</strong> {{ company.location }}</p>
+            <p><strong>Industry:</strong> {{ company.industry }}</p>
+            <p><strong>Website:</strong> <a href="{{ company.website }}" target="_blank">{{ company.website }}</a></p>
+        </div>
+    </div>
+    <div class="mb-3">
+        <a href="{% url 'create_internship' %}" class="btn btn-primary">Post New Internship</a>
+    </div>
+    <h5>Posted Internships</h5>
+    <ul class="list-group mb-3">
+        {% for internship in internships %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <span>{{ internship.title }}</span>
+                <a href="{% url 'internship_detail' internship.pk %}" class="btn btn-sm btn-outline-primary">View</a>
+            </li>
+        {% empty %}
+            <li class="list-group-item">No internships posted yet.</li>
+        {% endfor %}
+    </ul>
+    <div class="card">
+        <div class="card-body">
+            <h5>Total Applications: {{ total_applications }}</h5>
+        </div>
+    </div>
+</div>
+{% endblock %} 

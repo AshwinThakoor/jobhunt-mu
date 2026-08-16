@@ -1,0 +1,12 @@
+services:
+  web:
+    build: .
+    env_file: .env
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+      - jobhunt_media:/app/media
+    command: python manage.py runserver 0.0.0.0:8000
+volumes:
+  jobhunt_media:

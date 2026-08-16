@@ -1,0 +1,35 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+      - run: python -m pip install --upgrade pip
+      - run: python -m pip install -r requirements-dev.txt
+      - name: Django checks
+        env:
+          DJANGO_SECRET_KEY: ci-only-secret-key
+          DJANGO_DEBUG: "false"
+          DJANGO_ALLOWED_HOSTS: localhost,testserver
+        run: |
+          python manage.py check
+          python manage.py makemigrations --check --dry-run
+          python manage.py test
+      - name: Ruff
+        run: ruff check .

@@ -1,0 +1,141 @@
+{% extends 'myapp/base.html' %}
+{% block title %}{{ internship.title }} at {{ internship.company.name }} | JobHunt MU{% endblock %}
+{% block og_title %}{{ internship.title }} at {{ internship.company.name }} | JobHunt MU{% endblock %}
+{% block og_description %}Explore this {{ internship.job_type|lower }} opportunity in {{ internship.location }} and read the complete role details on JobHunt MU.{% endblock %}
+{% block content %}
+<section class="detail-hero">
+    <div class="container">
+        <a class="breadcrumb-link" href="{% url 'internship_list' %}"><i class="bi bi-arrow-left me-2"></i>Back to opportunities</a>
+        <div class="d-flex flex-wrap align-items-center gap-2 mt-4">
+            <span class="type-pill">{{ internship.get_opportunity_type_display }}</span>
+            <span class="source-badge">{{ internship.source_name }}</span>
+            {% if internship.is_premium %}<span class="premium-pill"><i class="bi bi-stars me-1"></i> Premium</span>{% endif %}
+        </div>
+        <h1>{{ internship.title }}</h1>
+        <p class="mb-0 text-white-50 fs-5">{{ internship.company.name }} Â· {{ internship.location|default:"Mauritius" }}</p>
+    </div>
+</section>
+
+<div class="container">
+    <div class="detail-layout">
+        <div>
+            {% if can_view_details %}
+                <article class="surface-card detail-card">
+                    <section class="detail-section mt-0 pt-0 border-0">
+                        <h2>About the opportunity</h2>
+                        <p>{{ internship.description|default:"The employer has not provided a full description yet."|linebreaksbr }}</p>
+                    </section>
+
+                    {% if internship.responsibilities %}
+                        <section class="detail-section">
+                            <h2>What youâ€™ll do</h2>
+                            <p>{{ internship.responsibilities|linebreaksbr }}</p>
+                        </section>
+                    {% endif %}
+
+                    {% if internship.requirements %}
+                        <section class="detail-section">
+                            <h2>What theyâ€™re looking for</h2>
+                            <p>{{ internship.requirements|linebreaksbr }}</p>
+                        </section>
+                    {% endif %}
+
+                    {% if internship.skills_required %}
+                        <section class="detail-section">
+                            <h2>Skills and keywords</h2>
+                            <div class="skill-list">
+                                {% for skill in internship.skills_required %}
+                                    <span class="skill-pill">{{ skill }}</span>
+                                {% endfor %}
+                            </div>
+                        </section>
+                    {% endif %}
+
+                    {% if internship.benefits %}
+                        <section class="detail-section">
+                            <h2>Benefits</h2>
+                            <ul class="benefit-list mb-0">
+                                {% for benefit in internship.benefits %}
+                                    <li><i class="bi bi-check-circle-fill"></i><span>{{ benefit }}</span></li>
+                                {% endfor %}
+                            </ul>
+                        </section>
+                    {% endif %}
+
+                    {% if internship.source_url %}
+                        <section class="detail-section">
+                            <p class="small text-muted mb-0">
+                                Originally listed on {{ internship.source_name }}.
+                                <a href="{{ internship.source_url }}" target="_blank" rel="nofollow noopener noreferrer">View original listing <i class="bi bi-box-arrow-up-right ms-1"></i></a>
+                            </p>
+                        </section>
+                    {% endif %}
+                </article>
+            {% else %}
+                <div class="paywall">
+                    <span class="company-initial mx-auto mb-3"><i class="bi bi-lock"></i></span>
+                    <h2>Unlock the complete opportunity</h2>
+                    <p class="text-muted">Premium members can read the full description, requirements, skills and application details.</p>
+                    <a class="btn btn-brand" href="{% url 'create_payment' %}">Unlock with Premium</a>
+                </div>
+            {% endif %}
+        </div>
+
+        <aside class="detail-sidebar">
+            <div class="surface-card detail-card mb-3">
+                <div class="d-flex align-items-center gap-3 mb-4">
+                    {% if internship.company.logo %}
+                        <img class="company-large-logo" src="{{ internship.company.logo.url }}" alt="{{ internship.company.name }} logo">
+                    {% else %}
+                        <span class="company-initial" aria-hidden="true">{{ internship.company.name|first|upper }}</span>
+                    {% endif %}
+                    <div>
+                        <div class="small text-muted">Hiring company</div>
+                        <h2 class="h5 mb-0">{{ internship.company.name }}</h2>
+                    </div>
+                </div>
+
+                <div class="detail-facts">
+                    <div class="detail-fact"><i class="bi bi-geo-alt"></i><span>{{ internship.location|default:"Mauritius" }}</span></div>
+                    <div class="detail-fact"><i class="bi bi-briefcase"></i><span>{{ internship.job_type|default:"Opportunity" }}</span></div>
+                    {% if internship.work_mode != 'unspecified' %}<div class="detail-fact"><i class="bi bi-laptop"></i><span>{{ internship.get_work_mode_display }}</span></div>{% endif %}
+                    <div class="detail-fact"><i class="bi bi-cash-coin"></i><span>{{ internship.stipend|default:"Not disclosed" }}</span></div>
+                    {% if internship.posted_date %}<div class="detail-fact"><i class="bi bi-calendar3"></i><span>Posted {{ internship.posted_date|date:"d M Y" }}</span></div>{% endif %}
+                    {% if internship.application_deadline %}<div class="detail-fact"><i class="bi bi-hourglass-split"></i><span>Apply by {{ internship.application_deadline|date:"d M Y" }}</span></div>{% endif %}
+                    {% if internship.company.industry %}<div class="detail-fact"><i class="bi bi-building"></i><span>{{ internship.company.industry }}</span></div>{% endif %}
+                </div>
+
+                <a class="btn btn-outline-brand w-100 mb-3" href="{% if user.is_authenticated %}{% url 'application_studio' internship.pk %}{% else %}{% url 'login' %}?next={% url 'application_studio' internship.pk %}{% endif %}"><i class="bi bi-stars me-1"></i> Analyse & prepare application</a>
+                <hr class="my-4">
+                {% if internship.is_open %}
+                    {% if user.is_authenticated %}
+                        {% if user.userprofile.user_type == 'student' and not user_has_applied and can_view_details %}
+                            <a class="btn btn-brand w-100" href="{% url 'apply_internship' internship.pk %}">Apply with JobHunt MU</a>
+                        {% elif user_has_applied %}
+                            <div class="alert alert-success mb-0"><i class="bi bi-check-circle me-1"></i> Application submitted</div>
+                        {% endif %}
+                    {% else %}
+                        <a class="btn btn-brand w-100" href="{% url 'login' %}?next={{ request.path|urlencode }}">Log in to apply</a>
+                    {% endif %}
+                    {% if internship.source_url and can_view_details %}
+                        <a class="btn btn-outline-brand w-100 mt-2" href="{{ internship.source_url }}" target="_blank" rel="nofollow noopener noreferrer">Apply on {{ internship.source_name }}</a>
+                    {% endif %}
+                {% else %}
+                    <div class="alert alert-secondary mb-0">Applications are closed</div>
+                {% endif %}
+            </div>
+
+            {% if internship.company.description %}
+                <div class="surface-card detail-card">
+                    <h2 class="h5">About {{ internship.company.name }}</h2>
+                    <p class="small text-muted mb-0">{{ internship.company.description }}</p>
+                    {% if internship.company.website %}
+                        <a class="small d-inline-block mt-3" href="{{ internship.company.website }}" target="_blank" rel="nofollow noopener noreferrer">Company profile <i class="bi bi-box-arrow-up-right ms-1"></i></a>
+                    {% endif %}
+                </div>
+            {% endif %}
+        </aside>
+    </div>
+</div>
+{% endblock %}
+

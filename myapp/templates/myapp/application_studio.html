@@ -1,0 +1,31 @@
+{% extends 'myapp/base.html' %}
+{% block title %}Application Studio | {{ internship.title }}{% endblock %}
+{% block content %}
+<section class="studio-hero"><div class="container py-5">
+<a class="breadcrumb-link" href="{% url 'internship_detail' internship.pk %}"><i class="bi bi-arrow-left me-2"></i>Back to job</a>
+<span class="eyebrow d-block mt-4">AI Career Assistant</span>
+<h1>Application Studio</h1><p>Build an evidence-based application for <strong>{{ internship.title }}</strong> at {{ internship.company.name }}.</p>
+</div></section>
+<div class="container py-5">
+<div class="studio-grid">
+<main>
+<div class="surface-card p-4 mb-4">
+<form method="get" class="d-flex flex-wrap gap-3 align-items-end"><div class="flex-grow-1"><label class="form-label fw-semibold">Resume used for analysis</label><select name="cv" class="form-select">{% for cv in cvs %}<option value="{{ cv.pk }}" {% if cv.pk == selected_cv.pk %}selected{% endif %}>{{ cv.title }}{% if cv.is_primary %} — Primary{% endif %}</option>{% endfor %}</select></div><button class="btn btn-outline-brand">Refresh analysis</button></form>
+</div>
+<div class="surface-card p-4 mb-4">
+<div class="d-flex justify-content-between align-items-start gap-3 flex-wrap"><div><span class="eyebrow">Compatibility, not hiring probability</span><h2 class="h3 mb-1">{{ pack.match.score|floatformat:2 }}</h2><p class="text-muted mb-0">Confidence: {{ pack.match.match_confidence|title }}</p></div><div class="score-ring"><strong>{% widthratio pack.match.score 1 100 %}%</strong><span>match</span></div></div>
+<hr><h3 class="h5">Why you match</h3><p>{{ pack.match.reason }}</p>
+<div class="row g-4"><div class="col-md-6"><h4 class="h6">Verified matches</h4><div class="skill-list">{% for skill in pack.match.matched_skills %}<span class="skill-pill">{{ skill }}</span>{% empty %}<span class="text-muted">No exact skill match detected.</span>{% endfor %}</div></div><div class="col-md-6"><h4 class="h6">Missing or unclear</h4><div class="skill-list">{% for skill in pack.match.missing_skills %}<span class="skill-pill skill-pill-missing">{{ skill }}</span>{% empty %}<span class="text-muted">No explicit gaps detected.</span>{% endfor %}</div></div></div>
+</div>
+<div class="surface-card p-4 mb-4"><span class="eyebrow">Truth-first tailoring</span><h2 class="h3">Resume improvement plan</h2><p class="text-muted">Only add claims that are supported by your real education, projects or work.</p>{% for action in pack.improvement_actions %}<div class="studio-action"><i class="bi bi-lightbulb"></i><div><strong>{{ action.title }}</strong><p>{{ action.guidance }}</p></div></div>{% endfor %}</div>
+<div class="surface-card p-4"><h2 class="h3">Create application documents</h2>{% if not is_premium %}<div class="locked-evidence mb-4"><i class="bi bi-lock-fill"></i><div><strong>Premium document generation</strong><span>Unlock editable tailored resumes, cover letters and application emails.</span></div><a class="btn btn-premium ms-auto" href="{% url 'create_payment' %}">Unlock Premium</a></div>{% endif %}
+<div class="document-option-grid">
+{% for kind,label,icon in document_options %}{% endfor %}
+<form method="post" class="document-option">{% csrf_token %}<input type="hidden" name="cv_id" value="{{ selected_cv.pk }}"><input type="hidden" name="action" value="tailored_resume"><i class="bi bi-file-earmark-person"></i><h3>Tailored resume</h3><p>Reorganize verified CV evidence around this job.</p><button class="btn btn-brand w-100" {% if not is_premium %}disabled{% endif %}>Generate draft</button></form>
+<form method="post" class="document-option">{% csrf_token %}<input type="hidden" name="cv_id" value="{{ selected_cv.pk }}"><input type="hidden" name="action" value="cover_letter"><i class="bi bi-file-earmark-text"></i><h3>Cover letter</h3><p>Create an editable, role-specific first draft.</p><button class="btn btn-brand w-100" {% if not is_premium %}disabled{% endif %}>Generate draft</button></form>
+<form method="post" class="document-option">{% csrf_token %}<input type="hidden" name="cv_id" value="{{ selected_cv.pk }}"><input type="hidden" name="action" value="application_email"><i class="bi bi-envelope-paper"></i><h3>Application email</h3><p>Prepare a concise subject and professional message.</p><button class="btn btn-brand w-100" {% if not is_premium %}disabled{% endif %}>Generate draft</button></form>
+</div></div>
+</main>
+<aside><div class="surface-card p-4 sticky-lg-top" style="top:100px"><span class="eyebrow">Selected opportunity</span><h2 class="h4">{{ internship.title }}</h2><p>{{ internship.company.name }} · {{ internship.location }}</p><hr><p class="small text-muted">Generated drafts must be reviewed. JobHunt MU never guarantees interviews or hiring outcomes.</p>{% if saved_documents %}<h3 class="h6 mt-4">Saved drafts</h3>{% for doc in saved_documents %}<a class="saved-doc-link" href="{% url 'career_document_edit' doc.pk %}"><i class="bi bi-file-earmark-check"></i><span>{{ doc.get_document_type_display }}<small>{{ doc.updated_at|date:"d M, H:i" }}</small></span></a>{% endfor %}{% endif %}</div></aside>
+</div></div>
+{% endblock %}

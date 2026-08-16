@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Form</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5; 
+            color: #333; 
+        }
+        h1 {
+            text-align: center;
+            color: #6f4c3e; 
+        }
+        form {
+            width: 80%;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 5px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        label {
+            display: block;
+            margin: 10px 0 5px;
+        }
+        input[type="number"], input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button, .back-button {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background-color: #6f4c3e; 
+            color: white; 
+            border: none;
+            border-radius: 5px; 
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none; 
+        }
+        button:hover, .back-button:hover {
+            background-color: #5a3e30; 
+        }
+    </style>
+</head>
+<body>
+    <h1>Student Form</h1>
+    <form method="POST">
+        {% csrf_token %}
+        <label for="first_name">First Name:</label>
+        <input type="text" name="first_name" required>
+        
+        <label for="last_name">Last Name:</label>
+        <input type="text" name="last_name" required>
+        
+        <label for="database_design_and_implementation">Database Design and Implementation:</label>
+        <input type="number" name="database_design_and_implementation" min="0" max="100" required>
+        
+        <label for="cloud_computing_and_techniques">Cloud Computing and Techniques:</label>
+        <input type="number" name="cloud_computing_and_techniques" min="0" max="100" required>
+        
+        <label for="python_programming_methodology_2">Python Programming Methodology 2:</label>
+        <input type="number" name="python_programming_methodology_2" min="0" max="100" required>
+        
+        <label for="internet_of_things_design_principles">Internet of Things Design Principles:</label>
+        <input type="number" name="internet_of_things_design_principles" min="0" max="100" required>
+        
+        <label for="big_data_architecture_and_programming">Big Data Architecture and Programming:</label>
+        <input type="number" name="big_data_architecture_and_programming" min="0" max="100" required>
+        
+        <label for="network_technologies_and_design">Network Technologies and Design:</label>
+        <input type="number" name="network_technologies_and_design" min="0" max="100" required>
+        
+        <button type="submit">Submit</button>
+    </form>
+    <a href="{% url 'home' %}" class="back-button">Back to Home</a> 
+</body>
+</html>

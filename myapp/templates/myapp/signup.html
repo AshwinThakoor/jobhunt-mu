@@ -1,0 +1,21 @@
+﻿{% extends 'myapp/base.html' %}
+{% load crispy_forms_tags %}
+{% block title %}Create an account | JobHunt MU{% endblock %}
+{% block content %}
+<section class="auth-shell">
+    <div class="container">
+        <div class="auth-card mx-auto" style="max-width: 660px;">
+            <span class="eyebrow text-success"><i class="bi bi-rocket-takeoff"></i> Get started</span>
+            <h1 class="h2 mb-2">Build your next opportunity</h1>
+            <p class="text-muted mb-4">Create a profile to save your CVs, track applications and receive recommendations.</p>
+            <form method="post">
+                {% csrf_token %}
+                {{ form|crispy }}
+                <button type="submit" class="btn btn-brand w-100 mt-2">Create my account</button>
+            </form>
+            <p class="text-center text-muted small mt-4 mb-0">Already registered? <a href="{% url 'login' %}">Log in</a></p>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
