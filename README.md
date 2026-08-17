@@ -10,7 +10,73 @@ JobHunt MU brings multi-source opportunity data into a normalized Django applica
 
 > **Public-repository boundary:** this repository is a curated technical showcase, not the complete private JobHunt MU product. Source-specific collection adapters, exact recommendation weights/rules, private generation logic, credentials, user data, live datasets and commercially useful implementation details are intentionally excluded.
 
-## Verified demo snapshot
+## At a glance
+
+| Verified demo metric | Result |
+|---|---:|
+| Opportunities | **113** |
+| Connected sources | **4** |
+| Employers / clients | **69** |
+| Automated tests | **21/21 passing** |
+| Payments | **Stripe Sandbox verified** |
+| Premium activation | **Server-side verified** |
+
+The numbers above are a **point-in-time development snapshot**, not a promise of continuously live production inventory.
+
+## Working demo
+
+### Multi-source opportunity discovery
+
+![JobHunt MU opportunity discovery showing the verified demo inventory](docs/screenshots/01-explore-jobs-overview.png)
+
+The verified build aggregated **113 opportunities across 4 connected sources** and displayed **69 employers/clients**, with filtering by role/company, location, opportunity type, source and skills.
+
+### Source directory
+
+![JobHunt MU connected source directory](docs/screenshots/02-source-directory.png)
+
+The verified snapshot contained imported opportunities from **MyJob.mu, Jobs.mu, Mauritius Jobs and Remotive**. Optional providers requiring credentials are not counted as connected sources.
+
+### Freelance discovery
+
+![JobHunt MU freelance opportunity discovery](docs/screenshots/03-freelance-opportunities.png)
+
+Freelance projects live in the same normalized discovery experience while retaining source attribution, location, compensation information and extracted skill context.
+
+### CV analysis
+
+![JobHunt MU CV analysis scorecard](docs/screenshots/06-cv-analysis.png)
+
+The CV workflow provides evidence-oriented scoring, structured checks and prioritized recommendations. Scores are directional and are **not presented as predictions of hiring outcomes or guaranteed ATS performance**.
+
+### Application Studio
+
+![JobHunt MU Application Studio cover letter workflow](docs/screenshots/07-application-studio-cover-letter.png)
+
+The private demo includes editable application-document workflows with explicit truth/safety reminders. Candidates are prompted to verify qualifications, tools, metrics, contact details and tone before using generated material.
+
+### Stripe Sandbox payment flow
+
+<table>
+<tr>
+<td width="50%"><img src="docs/screenshots/04-stripe-sandbox-checkout.png" alt="Stripe Sandbox Checkout for JobHunt MU Premium"></td>
+<td width="50%"><img src="docs/screenshots/05-premium-payment-confirmed.png" alt="JobHunt MU Premium payment confirmation"></td>
+</tr>
+<tr>
+<td align="center"><b>Stripe-hosted Sandbox Checkout</b></td>
+<td align="center"><b>Verified payment → Premium activation</b></td>
+</tr>
+</table>
+
+The application does not grant Premium merely because the browser reaches a success URL. Payment state is checked server-side, with Stripe webhook events participating in the verification flow.
+
+### Automated regression testing
+
+![Django test run showing 21 passing tests](docs/screenshots/08-automated-tests-21-passing.png)
+
+**21/21 automated tests passed** in the verified private build, and Django's system check reported no issues.
+
+## Verified capabilities
 
 | Capability | Verified private demo evidence |
 |---|---|
@@ -27,51 +93,17 @@ JobHunt MU brings multi-source opportunity data into a normalized Django applica
 | Webhooks | `payment_intent.succeeded` and `checkout.session.completed` delivered to Django with HTTP `200` during the verified test |
 | Automated tests | **21/21 passing** in the private build; Django system check reported no issues |
 
-The numbers above are a **point-in-time development snapshot**, not a promise of continuously live production inventory.
-
-## Product walkthrough
-
-The private demo currently demonstrates the following product flow:
+## Product flow
 
 1. Aggregate and normalize opportunities from multiple connected sources.
-2. Browse a unified market feed with source attribution and filters.
-3. Discover dedicated freelance/remote opportunities alongside conventional jobs.
-4. Save opportunities and track applications.
-5. Analyze a candidate CV and generate explainable compatibility evidence.
-6. Prepare application material with truth/safety review prompts.
-7. Upgrade through Stripe-hosted Checkout.
-8. Verify payment server-side before granting Premium access.
-
-### Screenshot gallery
-
-The current private demo has verified screenshots for:
-
-- **Explore Jobs** — 113 opportunities, 4 connected sources and 69 employers/clients in the verified build.
-- **Source Directory** — imported opportunities from MyJob.mu, Jobs.mu, Mauritius Jobs and Remotive.
-- **Freelance Discovery** — dedicated freelance-project filtering with source, location, compensation and skills.
-- **Stripe Sandbox Checkout** — JobHunt MU Premium checkout using Stripe-hosted payment UI.
-- **Premium Confirmation** — successful test payment verification and Premium activation.
-- **Automated Testing** — 21 tests completed successfully.
-
-> Screenshots containing personal candidate data, unfinished recommendation output or private implementation details are intentionally not published as final product evidence. The AI/matching experience remains under active refinement.
-
-## What I built
-
-The full private project includes:
-
-- searchable multi-source job and opportunity discovery;
-- normalized company/opportunity records;
-- source and freshness metadata with import-run tracking;
-- dedicated freelance and remote opportunity discovery;
-- PDF/DOCX resume extraction and structured analysis;
-- explainable resume-to-job compatibility output;
-- saved opportunities and application tracking;
-- application-document preparation workflows;
-- premium feature access control;
-- Stripe-hosted Checkout with server-side payment verification;
-- signed Stripe webhook handling;
-- Django administration and relational persistence;
-- automated regression testing and CI-oriented repository tooling.
+2. Browse a unified market feed with original-source attribution and filters.
+3. Discover freelance and remote opportunities alongside conventional jobs.
+4. Save opportunities and manage candidate workflows.
+5. Analyze a CV and produce structured, explainable feedback.
+6. Rank opportunities using interpretable matching evidence.
+7. Prepare application material with truth/safety review prompts.
+8. Upgrade through Stripe-hosted Checkout.
+9. Verify payment server-side before granting Premium access.
 
 ## Technology
 
@@ -112,15 +144,11 @@ The public repository retains enough structure to demonstrate Django application
 
 The **private development build passed 21/21 automated tests** during the 17 August 2026 verification run. Coverage includes:
 
-- public job-board rendering and filtering;
-- category/source filtering and visibility rules;
-- premium/basic recommendation access control;
-- explainable and ranked recommendation behavior;
-- saving recommendations;
-- skill-alias normalization and matching confidence;
+- public job-board rendering, category/source filtering and visibility rules;
+- premium/basic recommendation access control and ranked/explainable recommendations;
+- recommendation saving, skill-alias normalization and matching confidence;
 - CV scoring, skill-gap analysis and user isolation;
-- Application Studio basic/premium permissions;
-- premium document generation/editing/DOCX download;
+- Application Studio basic/premium permissions and premium DOCX generation/editing;
 - scraper description parsing;
 - Stripe Checkout creation;
 - prevention of Premium activation from an unverified/legacy success path;
@@ -133,72 +161,46 @@ The public repository contains a sanitized recruiter-visible test suite and CI c
 
 Stripe is implemented as a server-verified workflow rather than trusting a browser redirect.
 
-During the verified Sandbox run:
-
 ```text
-Stripe Checkout created successfully
+Stripe Checkout created
         ↓
-Test payment succeeded
+Sandbox payment succeeds
         ↓
 payment_intent.succeeded → Django webhook → HTTP 200
 checkout.session.completed → Django webhook → HTTP 200
         ↓
-Payment verified
+Server verifies payment state
         ↓
 Premium access activated
 ```
 
 No real card or production credentials are required for this portfolio demonstration. Stripe secrets, webhook signing secrets and `.env` files are never committed.
 
-## Resume intelligence & matching
-
-The project contains privacy-conscious PDF/DOCX resume extraction and structured feedback. The matching pipeline produces interpretable evidence such as matched skills, missing/unclear skills, confidence and score breakdowns.
-
-The system does **not** claim that a compatibility score predicts hiring outcomes. The recommendation experience is currently being improved, particularly around role relevance, ranking quality and final AI-facing presentation. This is deliberately described as an active demo rather than a finished recommendation product.
-
-## Application Studio
-
-The private build includes application-document workflows for preparing material such as cover letters and application emails. The workflow includes a truth/safety review that reminds the candidate to verify qualifications, tools, metrics, names/contact information and tone before using generated material.
-
-Premium document-generation/editing/DOCX behavior is covered by the private automated test suite. Generation rules and commercially useful implementation details are intentionally not exposed publicly.
-
 ## Data ingestion
 
-The private project contains the complete multi-source connector layer. During the verified demo snapshot, the UI displayed:
+During the verified demo snapshot, the UI displayed:
 
-- MyJob.mu — 40 imported opportunities;
-- Jobs.mu — 10 imported opportunities;
-- Mauritius Jobs — 40 imported opportunities;
-- Remotive — 23 imported opportunities.
+- **MyJob.mu** — 40 imported opportunities
+- **Jobs.mu** — 10 imported opportunities
+- **Mauritius Jobs** — 40 imported opportunities
+- **Remotive** — 23 imported opportunities
 
-That totals **113 opportunities across four connected sources** in the verified local build. Optional provider integrations that require API credentials are not counted as connected sources.
+Total: **113 opportunities across four connected sources** in the verified local build.
 
 For IP protection, source-specific adapters are excluded from this public showcase. The architecture follows a connector → normalization → validation/deduplication → persistence → freshness-tracking pipeline.
 
-## Repository boundaries
+## Public vs private boundary
 
-### Included publicly
-
-- Django project/application structure
-- selected domain models and web workflow code
-- resume-analysis engineering examples
-- templates and UI structure
-- payment-integration architecture
-- safe environment-variable examples
-- Docker/CI/testing configuration
-- architecture, security and development documentation
-- sanitized sample data where appropriate
-
-### Intentionally private
-
-- source-specific scraping/collection implementations
-- production endpoints and adapter details that materially simplify cloning
-- exact recommendation weights, aliases, heuristics and tuning
-- private application-generation rules
-- production credentials and deployment secrets
-- user resumes, generated documents and other personal data
-- live/full scraped datasets
-- internal product research and commercially useful implementation details
+| Included in this showcase | Kept private |
+|---|---|
+| Django project/application structure | Source-specific scraping/collection implementations |
+| Selected domain models and workflows | Exact recommendation weights, aliases, heuristics and tuning |
+| Resume-analysis engineering examples | Private application-generation rules |
+| Templates and UI structure | Production endpoints and adapter details that materially simplify cloning |
+| Payment-integration architecture | Production credentials and deployment secrets |
+| Safe environment-variable examples | User resumes and generated private documents |
+| Docker, CI and testing configuration | Full/live scraped datasets |
+| Architecture/security/development docs | Internal product research and commercially useful implementation details |
 
 ## Project structure
 
@@ -206,19 +208,20 @@ For IP protection, source-specific adapters are excluded from this public showca
 jobhunt-mu/
 ├── myapp/                 # Django application
 │   ├── services/          # Public service boundaries / selected safe implementation
-│   ├── templates/         # Candidate and employer workflows
+│   ├── templates/         # Candidate workflows
 │   ├── static/            # UI assets
 │   └── migrations/        # Data-model evolution
 ├── myproject/             # Django configuration
 ├── data/                  # Sanitized samples/documentation only
-├── docs/                  # Architecture and engineering documentation
+├── docs/
+│   └── screenshots/       # Verified portfolio-demo evidence
 ├── .github/               # CI and security automation
 ├── Dockerfile
 ├── docker-compose.yml
 └── README.md
 ```
 
-## Security and privacy
+## Security & privacy
 
 The project treats resumes and application documents as personal information. `.env` files, database files, uploaded resumes, generated private documents, production secrets and full live datasets should never be committed to a public repository.
 
@@ -228,29 +231,24 @@ The included `.env.example` contains placeholders only. Local development defaul
 
 **Current status: working portfolio demo / active development.**
 
-The purpose of this repository is to demonstrate that the underlying product workflows work and to make the engineering decisions inspectable without publishing the full private product.
+This repository demonstrates that the core engineering workflows function while keeping the complete private product and commercially sensitive implementation details protected.
 
-Current improvement areas include:
+Current improvement areas include stronger role-relevance ranking, refinement of AI-facing CV/matching experiences, richer dashboard/application workflows, broader approved data-provider integrations, continued UI/UX refinement and production hardening.
 
-- stronger role-relevance ranking and recommendation quality;
-- refinement of AI-facing CV/matching experiences;
-- richer dashboard/application workflow polish;
-- broader approved data-provider integrations;
-- continued UI/UX refinement and production hardening.
-
-The project will continue to evolve; the current demo should be read as a verified engineering milestone, not the final JobHunt MU product.
+The current build should therefore be read as a **verified engineering milestone**, not the final JobHunt MU product.
 
 ## Recruiter review path
 
 For a quick technical review:
 
-1. `myapp/tests.py` — regression evidence for job-board, CV-analysis and payment behavior.
-2. `myapp/services/cv_analyzer.py` — resume/document analysis engineering.
-3. `myapp/models.py` — relational/domain modeling.
-4. `myapp/views.py` — Django workflow and payment integration patterns.
-5. `ARCHITECTURE.md` — system boundaries and data flow.
-6. `.github/workflows/` — CI and CodeQL automation.
-7. `SECURITY.md` — privacy/security considerations.
+1. `docs/screenshots/` — working product evidence.
+2. `myapp/tests.py` — regression evidence for job-board, CV-analysis and payment behavior.
+3. `myapp/services/cv_analyzer.py` — resume/document analysis engineering.
+4. `myapp/models.py` — relational/domain modeling.
+5. `myapp/views.py` — Django workflow and payment integration patterns.
+6. `ARCHITECTURE.md` — system boundaries and data flow.
+7. `.github/workflows/` — CI and CodeQL automation.
+8. `SECURITY.md` — privacy/security considerations.
 
 ## Author
 
